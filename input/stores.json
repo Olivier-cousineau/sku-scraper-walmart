@@ -1,0 +1,54 @@
+{
+  "stores": [
+    {
+      "store_id": "3080",
+      "store_slug": "rosemere-qc-3080",
+      "name": "ROSEMERE, QC",
+      "address": "401 Boul Labelle, Rosemere, QC, J7A 3T2",
+      "city": "Rosemere",
+      "province": "QC",
+      "postal_code": "J7A 3T2",
+      "store_url": "https://www.walmart.ca/en/stores-near-me/3080"
+    },
+    {
+      "store_id": "3089",
+      "store_slug": "st-eustache-qc-3089",
+      "name": "ST EUSTACHE, QC",
+      "address": "764 Arthur Sauve Boul, Saint-Eustache, QC, J7R 4K3",
+      "city": "Saint-Eustache",
+      "province": "QC",
+      "postal_code": "J7R 4K3",
+      "store_url": "https://www.walmart.ca/en/stores-near-me/3089"
+    },
+    {
+      "store_id": "1032",
+      "store_slug": "laval-qc-1032",
+      "name": "LAVAL, QC",
+      "address": "5205 Blvd Robert Bourassa, Laval, QC, H7E 0A3",
+      "city": "Laval",
+      "province": "QC",
+      "postal_code": "H7E 0A3",
+      "store_url": "https://www.walmart.ca/en/stores-near-me/1032"
+    },
+    {
+      "store_id": "3132",
+      "store_slug": "lachute-qc-3132",
+      "name": "LACHUTE, QC",
+      "address": "480 Av Bethany, Lachute, QC, J8H 4H5",
+      "city": "Lachute",
+      "province": "QC",
+      "postal_code": "J8H 4H5",
+      "store_url": "https://www.walmart.ca/en/stores-near-me/3132"
+    },
+    {
+      "store_id": "1085",
+      "store_slug": "lachenaie-terrebonne-qc-1085",
+      "name": "LACHENAIE / TERREBONNE, QC",
+      "address": "1001 Rue Des Migrateurs, Terrebonne, QC, J6V 0A8",
+      "city": "Terrebonne",
+      "province": "QC",
+      "postal_code": "J6V 0A8",
+      "store_url": "https://www.walmart.ca/en/stores-near-me/1085"
+    }
+  ]
+}
