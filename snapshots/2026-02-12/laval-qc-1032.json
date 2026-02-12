@@ -1,5 +1,86 @@
 {
   "store_id": "1032",
   "store_slug": "laval-qc-1032",
-  "results": []
+  "results": [
+    {
+      "sku": "6000208418990",
+      "status": "pending"
+    },
+    {
+      "sku": "6000201209824",
+      "status": "pending"
+    },
+    {
+      "sku": "6000196093848",
+      "status": "pending"
+    },
+    {
+      "sku": "6000201874801",
+      "status": "pending"
+    },
+    {
+      "sku": "6000202420426",
+      "status": "pending"
+    },
+    {
+      "sku": "114077",
+      "status": "pending"
+    },
+    {
+      "sku": "6000207661987",
+      "status": "pending"
+    },
+    {
+      "sku": "6000198726314",
+      "status": "pending"
+    },
+    {
+      "sku": "6000204768209",
+      "status": "pending"
+    },
+    {
+      "sku": "6000199891127",
+      "status": "pending"
+    },
+    {
+      "sku": "6000207877900",
+      "status": "pending"
+    },
+    {
+      "sku": "6000203265250",
+      "status": "pending"
+    },
+    {
+      "sku": "6000198700959",
+      "status": "pending"
+    },
+    {
+      "sku": "6000208073112",
+      "status": "pending"
+    },
+    {
+      "sku": "6000208073625",
+      "status": "pending"
+    },
+    {
+      "sku": "6000201204931",
+      "status": "pending"
+    },
+    {
+      "sku": "6000204264313",
+      "status": "pending"
+    },
+    {
+      "sku": "6000208073118",
+      "status": "pending"
+    },
+    {
+      "sku": "6000204264327",
+      "status": "pending"
+    },
+    {
+      "sku": "6000207650617",
+      "status": "pending"
+    }
+  ]
 }
