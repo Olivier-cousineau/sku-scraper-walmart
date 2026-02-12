@@ -42,6 +42,12 @@ jobs:
           STORE_LIMIT: ${{ github.event.inputs.store_limit }}
         run: python scripts/walmart_sku_store_check.py
 
+      - name: Debug outputs
+        run: |
+          ls -la
+          ls -la snapshots || true
+          find . -maxdepth 4 -type f -name "*.json" -print
+
       - name: Commit and push snapshots changes
         run: |
           if [ -z "$(git status --porcelain snapshots)" ]; then
