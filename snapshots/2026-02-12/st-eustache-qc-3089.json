@@ -4,83 +4,143 @@
   "results": [
     {
       "sku": "6000208418990",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3089",
+      "store_slug": "st-eustache-qc-3089",
+      "checked_at": "2026-02-12T04:14:10Z"
     },
     {
       "sku": "6000201209824",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3089",
+      "store_slug": "st-eustache-qc-3089",
+      "checked_at": "2026-02-12T04:14:12Z"
     },
     {
       "sku": "6000196093848",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3089",
+      "store_slug": "st-eustache-qc-3089",
+      "checked_at": "2026-02-12T04:14:13Z"
     },
     {
       "sku": "6000201874801",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3089",
+      "store_slug": "st-eustache-qc-3089",
+      "checked_at": "2026-02-12T04:14:15Z"
     },
     {
       "sku": "6000202420426",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3089",
+      "store_slug": "st-eustache-qc-3089",
+      "checked_at": "2026-02-12T04:14:17Z"
     },
     {
       "sku": "114077",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3089",
+      "store_slug": "st-eustache-qc-3089",
+      "checked_at": "2026-02-12T04:14:18Z"
     },
     {
       "sku": "6000207661987",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3089",
+      "store_slug": "st-eustache-qc-3089",
+      "checked_at": "2026-02-12T04:14:20Z"
     },
     {
       "sku": "6000198726314",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3089",
+      "store_slug": "st-eustache-qc-3089",
+      "checked_at": "2026-02-12T04:14:22Z"
     },
     {
       "sku": "6000204768209",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3089",
+      "store_slug": "st-eustache-qc-3089",
+      "checked_at": "2026-02-12T04:14:23Z"
     },
     {
       "sku": "6000199891127",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3089",
+      "store_slug": "st-eustache-qc-3089",
+      "checked_at": "2026-02-12T04:14:25Z"
     },
     {
       "sku": "6000207877900",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3089",
+      "store_slug": "st-eustache-qc-3089",
+      "checked_at": "2026-02-12T04:14:27Z"
     },
     {
       "sku": "6000203265250",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3089",
+      "store_slug": "st-eustache-qc-3089",
+      "checked_at": "2026-02-12T04:14:28Z"
     },
     {
       "sku": "6000198700959",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3089",
+      "store_slug": "st-eustache-qc-3089",
+      "checked_at": "2026-02-12T04:14:30Z"
     },
     {
       "sku": "6000208073112",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3089",
+      "store_slug": "st-eustache-qc-3089",
+      "checked_at": "2026-02-12T04:14:32Z"
     },
     {
       "sku": "6000208073625",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3089",
+      "store_slug": "st-eustache-qc-3089",
+      "checked_at": "2026-02-12T04:14:33Z"
     },
     {
       "sku": "6000201204931",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3089",
+      "store_slug": "st-eustache-qc-3089",
+      "checked_at": "2026-02-12T04:14:35Z"
     },
     {
       "sku": "6000204264313",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3089",
+      "store_slug": "st-eustache-qc-3089",
+      "checked_at": "2026-02-12T04:14:37Z"
     },
     {
       "sku": "6000208073118",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3089",
+      "store_slug": "st-eustache-qc-3089",
+      "checked_at": "2026-02-12T04:14:39Z"
     },
     {
       "sku": "6000204264327",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3089",
+      "store_slug": "st-eustache-qc-3089",
+      "checked_at": "2026-02-12T04:14:40Z"
     },
     {
       "sku": "6000207650617",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3089",
+      "store_slug": "st-eustache-qc-3089",
+      "checked_at": "2026-02-12T04:14:42Z"
     }
   ]
 }

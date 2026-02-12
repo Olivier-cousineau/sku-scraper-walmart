@@ -4,83 +4,143 @@
   "results": [
     {
       "sku": "6000208418990",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3132",
+      "store_slug": "lachute-qc-3132",
+      "checked_at": "2026-02-12T04:15:20Z"
     },
     {
       "sku": "6000201209824",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3132",
+      "store_slug": "lachute-qc-3132",
+      "checked_at": "2026-02-12T04:15:21Z"
     },
     {
       "sku": "6000196093848",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3132",
+      "store_slug": "lachute-qc-3132",
+      "checked_at": "2026-02-12T04:15:23Z"
     },
     {
       "sku": "6000201874801",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3132",
+      "store_slug": "lachute-qc-3132",
+      "checked_at": "2026-02-12T04:15:25Z"
     },
     {
       "sku": "6000202420426",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3132",
+      "store_slug": "lachute-qc-3132",
+      "checked_at": "2026-02-12T04:15:26Z"
     },
     {
       "sku": "114077",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3132",
+      "store_slug": "lachute-qc-3132",
+      "checked_at": "2026-02-12T04:15:28Z"
     },
     {
       "sku": "6000207661987",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3132",
+      "store_slug": "lachute-qc-3132",
+      "checked_at": "2026-02-12T04:15:29Z"
     },
     {
       "sku": "6000198726314",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3132",
+      "store_slug": "lachute-qc-3132",
+      "checked_at": "2026-02-12T04:15:31Z"
     },
     {
       "sku": "6000204768209",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3132",
+      "store_slug": "lachute-qc-3132",
+      "checked_at": "2026-02-12T04:15:33Z"
     },
     {
       "sku": "6000199891127",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3132",
+      "store_slug": "lachute-qc-3132",
+      "checked_at": "2026-02-12T04:15:35Z"
     },
     {
       "sku": "6000207877900",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3132",
+      "store_slug": "lachute-qc-3132",
+      "checked_at": "2026-02-12T04:15:36Z"
     },
     {
       "sku": "6000203265250",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3132",
+      "store_slug": "lachute-qc-3132",
+      "checked_at": "2026-02-12T04:15:38Z"
     },
     {
       "sku": "6000198700959",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3132",
+      "store_slug": "lachute-qc-3132",
+      "checked_at": "2026-02-12T04:15:40Z"
     },
     {
       "sku": "6000208073112",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3132",
+      "store_slug": "lachute-qc-3132",
+      "checked_at": "2026-02-12T04:15:41Z"
     },
     {
       "sku": "6000208073625",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3132",
+      "store_slug": "lachute-qc-3132",
+      "checked_at": "2026-02-12T04:15:43Z"
     },
     {
       "sku": "6000201204931",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3132",
+      "store_slug": "lachute-qc-3132",
+      "checked_at": "2026-02-12T04:15:45Z"
     },
     {
       "sku": "6000204264313",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3132",
+      "store_slug": "lachute-qc-3132",
+      "checked_at": "2026-02-12T04:15:46Z"
     },
     {
       "sku": "6000208073118",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3132",
+      "store_slug": "lachute-qc-3132",
+      "checked_at": "2026-02-12T04:15:48Z"
     },
     {
       "sku": "6000204264327",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3132",
+      "store_slug": "lachute-qc-3132",
+      "checked_at": "2026-02-12T04:15:50Z"
     },
     {
       "sku": "6000207650617",
-      "status": "not_found"
+      "status": "not_found",
+      "store_id": "3132",
+      "store_slug": "lachute-qc-3132",
+      "checked_at": "2026-02-12T04:15:51Z"
     }
   ]
 }
