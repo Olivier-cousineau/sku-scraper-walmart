@@ -10,10 +10,9 @@ from datetime import datetime
 from pathlib import Path
 import sys
 
-import requests
 from bs4 import BeautifulSoup
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
+from playwright.sync_api import Page, sync_playwright
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
@@ -21,38 +20,7 @@ if str(REPO_ROOT) not in sys.path:
 
 from scraper import load_skus, load_stores
 
-BASE_URL = "https://www.walmart.ca/ip/{sku}?storeId={store_id}"
-USER_AGENT = (
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) "
-    "Chrome/123.0.0.0 Safari/537.36"
-)
-
-
-def build_session() -> requests.Session:
-    retry = Retry(
-        total=3,
-        connect=3,
-        read=3,
-        backoff_factor=0.75,
-        status_forcelist=(429, 500, 502, 503, 504),
-        allowed_methods=frozenset(["GET"]),
-        raise_on_status=False,
-    )
-    adapter = HTTPAdapter(max_retries=retry)
-    session = requests.Session()
-    session.mount("https://", adapter)
-    session.mount("http://", adapter)
-    session.headers.update(
-        {
-            "User-Agent": USER_AGENT,
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "Accept-Language": "en-CA,en;q=0.9",
-            "Cache-Control": "no-cache",
-            "Pragma": "no-cache",
-        }
-    )
-    return session
+BASE_URL = "https://www.walmart.ca/fr/ip/{sku}"
 
 
 def _extract_braced_json(raw_text: str, marker: str) -> str | None:
@@ -200,7 +168,7 @@ def _extract_product_fields(data, sku: str) -> dict | None:
         status_lower = (availability_text or "").lower()
         if any(token in status_lower for token in ["in stock", "available", "pickup"]):
             in_stock = True
-        elif any(token in status_lower for token in ["out of stock", "unavailable", "sold out"]):
+        elif any(token in status_lower for token in ["out of stock", "unavailable", "sold out", "rupture"]):
             in_stock = False
         else:
             in_stock = None
@@ -215,34 +183,85 @@ def _extract_product_fields(data, sku: str) -> dict | None:
     }
 
 
-def fetch_sku_store_data(
-    session: requests.Session,
-    sku: str,
-    store_id: str,
-    store_slug: str,
-) -> dict[str, object]:
-    url = BASE_URL.format(sku=sku, store_id=store_id)
+def _wait_network_idle(page: Page, timeout_ms: int = 15_000) -> None:
+    try:
+        page.wait_for_load_state("networkidle", timeout=timeout_ms)
+    except PlaywrightTimeoutError:
+        page.wait_for_timeout(1500)
+
+
+def _page_is_not_found(html: str, final_url: str) -> bool:
+    lowered = html.lower()
+    if any(token in lowered for token in ["404", "page introuvable", "page not found"]):
+        return True
+    return "/errors/" in final_url.lower()
+
+
+def _set_store_context(page: Page, store_id: str) -> None:
+    page.goto("https://www.walmart.ca/", wait_until="domcontentloaded", timeout=30_000)
+    _wait_network_idle(page)
+    page.evaluate(
+        """(storeId) => {
+            localStorage.setItem('pickupStore', JSON.stringify({ storeId }));
+        }""",
+        store_id,
+    )
+    page.reload(wait_until="domcontentloaded", timeout=30_000)
+    _wait_network_idle(page)
+
+
+def fetch_sku_store_data(page: Page, sku: str, store_id: str, store_slug: str) -> dict[str, object]:
+    checked_at = datetime.utcnow().isoformat(timespec="seconds") + "Z"
+    url = BASE_URL.format(sku=sku)
 
     try:
-        response = session.get(url, timeout=25)
-    except requests.RequestException:
-        return {"sku": sku, "status": "not_found"}
+        response = page.goto(url, wait_until="domcontentloaded", timeout=35_000)
+        _wait_network_idle(page)
+    except PlaywrightTimeoutError:
+        return {
+            "sku": sku,
+            "status": "not_found",
+            "store_id": store_id,
+            "store_slug": store_slug,
+            "checked_at": checked_at,
+        }
 
-    if response.status_code in (403, 404, 429):
-        return {"sku": sku, "status": "not_found"}
+    html = page.content()
+    status_code = response.status if response else None
+    if status_code == 404 or _page_is_not_found(html, page.url):
+        return {
+            "sku": sku,
+            "status": "not_found",
+            "store_id": store_id,
+            "store_slug": store_slug,
+            "checked_at": checked_at,
+        }
 
-    if "robot" in response.text.lower() or "access denied" in response.text.lower():
-        return {"sku": sku, "status": "not_found"}
-
-    embedded_data = _extract_embedded_data(response.text)
+    embedded_data = _extract_embedded_data(html)
     if embedded_data is None:
-        return {"sku": sku, "status": "not_found"}
+        return {
+            "sku": sku,
+            "status": "not_found",
+            "store_id": store_id,
+            "store_slug": store_slug,
+            "checked_at": checked_at,
+        }
 
     extracted = _extract_product_fields(embedded_data, sku)
     if not extracted:
-        return {"sku": sku, "status": "not_found"}
+        return {
+            "sku": sku,
+            "status": "not_found",
+            "store_id": store_id,
+            "store_slug": store_slug,
+            "checked_at": checked_at,
+        }
 
-    checked_at = datetime.utcnow().isoformat(timespec="seconds") + "Z"
+    if extracted.get("in_stock") is False:
+        extracted["status"] = "out_of_stock"
+    else:
+        extracted["status"] = "ok"
+
     extracted.update(
         {
             "store_id": store_id,
@@ -269,41 +288,59 @@ def main() -> None:
     out_dir = Path("snapshots") / datetime.utcnow().strftime("%Y-%m-%d")
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    session = build_session()
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
 
-    for store in stores:
-        store_id = store.get("store_id")
-        store_slug = store.get("store_slug")
-        if not store_id or not store_slug:
-            raise ValueError("Each store must include store_id and store_slug")
+        for store in stores:
+            store_id = store.get("store_id")
+            store_slug = store.get("store_slug")
+            if not store_id or not store_slug:
+                raise ValueError("Each store must include store_id and store_slug")
 
-        results: list[dict[str, object]] = []
+            context = browser.new_context(locale="fr-CA")
+            page = context.new_page()
+            _set_store_context(page, str(store_id))
 
-        for sku in skus:
-            try:
-                results.append(fetch_sku_store_data(session, sku, store_id, store_slug))
-            except Exception as e:
-                print(f"[{store_slug}] FAIL sku={sku}: {e}")
-                results.append({"sku": sku, "status": "not_found"})
-            finally:
-                time.sleep(1)
+            results: list[dict[str, object]] = []
 
-        out_path = out_dir / f"{store_slug}.json"
+            for sku in skus:
+                print(f"Fetching {store_slug} {sku}")
+                try:
+                    results.append(fetch_sku_store_data(page, sku, str(store_id), str(store_slug)))
+                except Exception as e:
+                    print(f"[{store_slug}] FAIL sku={sku}: {e}")
+                    results.append(
+                        {
+                            "sku": sku,
+                            "status": "not_found",
+                            "store_id": store_id,
+                            "store_slug": store_slug,
+                            "checked_at": datetime.utcnow().isoformat(timespec="seconds") + "Z",
+                        }
+                    )
+                finally:
+                    time.sleep(1)
 
-        with out_path.open("w", encoding="utf-8") as f:
-            json.dump(
-                {
-                    "store_id": store_id,
-                    "store_slug": store_slug,
-                    "results": results,
-                },
-                f,
-                indent=2,
-                ensure_ascii=False,
-            )
-            f.write("\n")
+            context.close()
 
-        print(f"Wrote {out_path} ({len(results)} items)")
+            out_path = out_dir / f"{store_slug}.json"
+
+            with out_path.open("w", encoding="utf-8") as f:
+                json.dump(
+                    {
+                        "store_id": store_id,
+                        "store_slug": store_slug,
+                        "results": results,
+                    },
+                    f,
+                    indent=2,
+                    ensure_ascii=False,
+                )
+                f.write("\n")
+
+            print(f"Wrote {out_path} ({len(results)} items)")
+
+        browser.close()
 
 
 if __name__ == "__main__":
