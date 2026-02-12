@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 
 STORES_PATH = Path("input/stores.json")
+SKUS_PATH = Path("input/skus.json")
 
 
 def load_stores(path: Path = STORES_PATH) -> list[dict[str, str]]:
@@ -15,6 +16,27 @@ def load_stores(path: Path = STORES_PATH) -> list[dict[str, str]]:
     if not isinstance(stores, list):
         raise ValueError("input/stores.json must contain a 'stores' list")
     return stores
+
+
+def load_skus(path: Path = SKUS_PATH) -> list[str]:
+    data = json.loads(path.read_text(encoding="utf-8"))
+
+    if isinstance(data, dict):
+        raw_skus = data.get("skus", [])
+        if not isinstance(raw_skus, list):
+            raise ValueError("input/skus.json must contain a 'skus' list")
+    elif isinstance(data, list):
+        raw_skus = [item.get("sku") for item in data if isinstance(item, dict)]
+    else:
+        raise ValueError("input/skus.json must be either {'skus': [...]} or [{'sku': '...'}]")
+
+    skus = [sku.strip() for sku in raw_skus if isinstance(sku, str) and sku.strip()]
+    print(f"Loaded {len(skus)} SKUs -> {skus[:5]}")
+
+    if not skus:
+        raise ValueError("No SKUs found in input/skus.json")
+
+    return skus
 
 
 def iter_store_targets(path: Path = STORES_PATH):
