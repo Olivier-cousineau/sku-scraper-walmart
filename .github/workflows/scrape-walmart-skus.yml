@@ -1,0 +1,56 @@
+name: Scrape Walmart SKUs
+
+on:
+  workflow_dispatch:
+    inputs:
+      max_skus:
+        description: "Nombre maximum de SKUs à traiter"
+        required: false
+        default: ""
+      store_limit:
+        description: "Nombre maximum de magasins à traiter"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install Playwright Chromium
+        run: python -m playwright install --with-deps chromium
+
+      - name: Run Walmart SKU store check
+        env:
+          MAX_SKUS: ${{ github.event.inputs.max_skus }}
+          STORE_LIMIT: ${{ github.event.inputs.store_limit }}
+        run: python scripts/walmart_sku_store_check.py
+
+      - name: Commit and push snapshots changes
+        run: |
+          if [ -z "$(git status --porcelain snapshots)" ]; then
+            echo "No changes in snapshots/**"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add snapshots
+          git commit -m "chore: update walmart snapshots"
+          git push
