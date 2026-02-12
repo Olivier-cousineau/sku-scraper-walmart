@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import time
 from datetime import datetime
@@ -21,6 +22,7 @@ if str(REPO_ROOT) not in sys.path:
 from scraper import load_skus, load_stores
 
 BASE_URL = "https://www.walmart.ca/fr/ip/{sku}"
+BLOCKED_SAMPLE_SIZE = 5
 
 
 def _extract_braced_json(raw_text: str, marker: str) -> str | None:
@@ -313,6 +315,12 @@ def main() -> None:
     out_dir = Path("snapshots") / datetime.utcnow().strftime("%Y-%m-%d")
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    stop_on_initial_blocked = os.getenv("STOP_ON_INITIAL_BLOCKED", "").lower() in {
+        "1",
+        "true",
+        "yes",
+    }
+
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
 
@@ -328,6 +336,7 @@ def main() -> None:
 
             results: list[dict[str, object]] = []
             summary_counts = {"ok": 0, "nf": 0, "oos": 0, "blocked": 0}
+            first_statuses: list[str] = []
 
             for sku in skus:
                 print(f"Fetching {store_slug} {sku}")
@@ -346,6 +355,8 @@ def main() -> None:
                     time.sleep(1)
 
                 status = str(result.get("status", "not_found"))
+                if len(first_statuses) < BLOCKED_SAMPLE_SIZE:
+                    first_statuses.append(status)
                 if status == "ok":
                     summary_counts["ok"] += 1
                 elif status == "out_of_stock":
@@ -361,6 +372,19 @@ def main() -> None:
                 )
 
                 results.append(result)
+
+                if (
+                    stop_on_initial_blocked
+                    and len(first_statuses) == min(BLOCKED_SAMPLE_SIZE, len(skus))
+                    and all(item == "blocked" for item in first_statuses)
+                ):
+                    context.close()
+                    browser.close()
+                    print(
+                        f"[{store_slug}] First {len(first_statuses)} SKUs are blocked; "
+                        "stopping early to avoid hammering Walmart."
+                    )
+                    raise SystemExit(10)
 
             context.close()
 

@@ -40,7 +40,17 @@ jobs:
         env:
           MAX_SKUS: ${{ github.event.inputs.max_skus }}
           STORE_LIMIT: ${{ github.event.inputs.store_limit }}
-        run: python scripts/walmart_sku_store_check.py
+          STOP_ON_INITIAL_BLOCKED: "1"
+        run: |
+          set +e
+          python scripts/walmart_sku_store_check.py
+          status=$?
+          set -e
+          if [ "$status" -eq 10 ]; then
+            echo "Detected blocked status on initial SKU sample. Exiting workflow early without error."
+            exit 0
+          fi
+          exit "$status"
 
       - name: Debug outputs
         run: |
