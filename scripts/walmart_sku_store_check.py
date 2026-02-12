@@ -197,6 +197,20 @@ def _page_is_not_found(html: str, final_url: str) -> bool:
     return "/errors/" in final_url.lower()
 
 
+def _page_is_blocked(html: str, final_url: str) -> bool:
+    lowered = html.lower()
+    blocked_tokens = [
+        "access denied",
+        "automated access",
+        "captcha",
+        "verify you are human",
+        "forbidden",
+    ]
+    if any(token in lowered for token in blocked_tokens):
+        return True
+    return "/blocked" in final_url.lower()
+
+
 def _set_store_context(page: Page, store_id: str) -> None:
     page.goto("https://www.walmart.ca/", wait_until="domcontentloaded", timeout=30_000)
     _wait_network_idle(page)
@@ -228,6 +242,15 @@ def fetch_sku_store_data(page: Page, sku: str, store_id: str, store_slug: str) -
 
     html = page.content()
     status_code = response.status if response else None
+    if status_code in (403, 429) or _page_is_blocked(html, page.url):
+        return {
+            "sku": sku,
+            "status": "blocked",
+            "store_id": store_id,
+            "store_slug": store_slug,
+            "checked_at": checked_at,
+        }
+
     if status_code == 404 or _page_is_not_found(html, page.url):
         return {
             "sku": sku,
@@ -259,8 +282,10 @@ def fetch_sku_store_data(page: Page, sku: str, store_id: str, store_slug: str) -
 
     if extracted.get("in_stock") is False:
         extracted["status"] = "out_of_stock"
-    else:
+    elif extracted.get("price_current") is not None:
         extracted["status"] = "ok"
+    else:
+        extracted["status"] = "not_found"
 
     extracted.update(
         {
@@ -302,24 +327,40 @@ def main() -> None:
             _set_store_context(page, str(store_id))
 
             results: list[dict[str, object]] = []
+            summary_counts = {"ok": 0, "nf": 0, "oos": 0, "blocked": 0}
 
             for sku in skus:
                 print(f"Fetching {store_slug} {sku}")
                 try:
-                    results.append(fetch_sku_store_data(page, sku, str(store_id), str(store_slug)))
+                    result = fetch_sku_store_data(page, sku, str(store_id), str(store_slug))
                 except Exception as e:
                     print(f"[{store_slug}] FAIL sku={sku}: {e}")
-                    results.append(
-                        {
-                            "sku": sku,
-                            "status": "not_found",
-                            "store_id": store_id,
-                            "store_slug": store_slug,
-                            "checked_at": datetime.utcnow().isoformat(timespec="seconds") + "Z",
-                        }
-                    )
+                    result = {
+                        "sku": sku,
+                        "status": "not_found",
+                        "store_id": store_id,
+                        "store_slug": store_slug,
+                        "checked_at": datetime.utcnow().isoformat(timespec="seconds") + "Z",
+                    }
                 finally:
                     time.sleep(1)
+
+                status = str(result.get("status", "not_found"))
+                if status == "ok":
+                    summary_counts["ok"] += 1
+                elif status == "out_of_stock":
+                    summary_counts["oos"] += 1
+                elif status == "blocked":
+                    summary_counts["blocked"] += 1
+                else:
+                    summary_counts["nf"] += 1
+
+                print(
+                    f"[{store_slug}] sku={sku} status={status} "
+                    f"price={result.get('price_current')} stock={result.get('in_stock')}"
+                )
+
+                results.append(result)
 
             context.close()
 
@@ -339,6 +380,11 @@ def main() -> None:
                 f.write("\n")
 
             print(f"Wrote {out_path} ({len(results)} items)")
+            print(
+                f"[{store_slug}] Summary ok={summary_counts['ok']} "
+                f"nf={summary_counts['nf']} oos={summary_counts['oos']} "
+                f"blocked={summary_counts['blocked']}"
+            )
 
         browser.close()
 
